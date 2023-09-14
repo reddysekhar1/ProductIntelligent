@@ -1,0 +1,80 @@
+spring:
+  application:
+    name: "${IMAGE_NAME:template-spring-boot}"
+
+  profiles:
+    active: mock
+
+  sleuth:
+    traceId128: true
+    sampler:
+      probability: 1.0
+    opentracing:
+      enabled: true
+
+  zipkin:
+    baseUrl: ${ZIPKIN_BASE_URL:jaeger-all-in-one-inmemory-collector}
+  
+
+
+swagger:
+  baseApiPackage:
+  - "com.intelliservice.botapi" 
+  title: "${IMAGE_NAME:template-spring-boot}"
+  description: "Description"
+  version: "1.0.0"
+  termsOfServiceUrl: ""
+
+  license: "MIT"
+  licenseUrl: ""
+
+management:
+  endpoints:
+    web:
+      base-path: "/metrics"
+      exposure:
+        include: "*"
+  metrics:
+    export:
+      elastic:
+        enabled: false
+  
+server:
+  port: ${PORT:9099}
+
+logging:
+  file.name: logs/application.log
+  level:
+    ROOT: ${LOG_LEVEL:INFO}
+    com.intelliservice.botapi: DEBUG
+    com.intelliservice.cloud_garage: DEBUG
+    org.springframework: ERROR
+    org.springframework.web: WARN
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+    ch.qos.logback.classic: ERROR
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X] %5p ${hostName} --- [%15.15t] %-40.40c{1.} : %m%n%ex"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X] %5p ${hostName} --- [%15.15t] %-40.40c{1.} : %m%n%ex"
+
+
+
+elasticsearch:
+  host: "${ESHOST}"
+  port: ${ESPORT}
+  url: "${ELASTICSEARCH_URL}"
+  connection-timout: 30000
+  iothread_count: 2
+  socket_timeout: 60000
+  max_retry_timeout:  60000 
+  connectionrequest_timeout: 30000
+  
+  productTriageIndexNames:
+    producttriage: "producttriage"
+    productattributes: "productattributes"
+    sourcemap: "sourcemap"
+
+pythonUrl:
+  url: "${MLSERVICES_URL}"  
+  
+selfUrl:
+  url: "${PRODUCTINTELLIGENT_URL}" 

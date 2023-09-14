@@ -1,0 +1,29 @@
+pipeline {
+  agent any
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '5'))
+  }
+  stages {
+    stage('Compile') {
+      steps {
+        sh 'echo " Starting Product Intelligent code compilation "' 
+        sh 'mvn clean package'
+        sh 'ls target/'
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: 'target/*.jar'
+        }
+      }
+    }
+    stage('WhiteSourceAnalysis') {
+      steps {
+        sh 'curl -LJO https://github.com/whitesource/unified-agent-distribution/raw/master/standAlone/wss_agent.sh'
+        sh 'chmod +x wss_agent.sh'
+        sh './wss_agent.sh -c wss-productintelligent.config -d ./'
+
+      }
+    }
+    
+  }
+}
